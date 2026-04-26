@@ -1,5 +1,5 @@
 let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
-let chart;
+let chart = null;
 
 function saveExpenses() {
   localStorage.setItem("expenses", JSON.stringify(expenses));
@@ -11,18 +11,20 @@ function addExpense() {
   const category = document.getElementById("category").value;
   const date = document.getElementById("date").value;
 
-  if (!desc || !amount || amount <= 0 || !date) {
+  if (desc === "" || isNaN(amount) || amount <= 0 || date === "") {
     alert("Please fill all fields correctly.");
     return;
   }
 
-  expenses.push({
+  const newExpense = {
     id: Date.now(),
-    desc,
-    amount,
-    category,
-    date
-  });
+    desc: desc,
+    amount: amount,
+    category: category,
+    date: date
+  };
+
+  expenses.push(newExpense);
 
   saveExpenses();
   clearForm();
@@ -40,12 +42,14 @@ function showExpenses() {
   const totalExpense = document.getElementById("totalExpense");
   const totalEntries = document.getElementById("totalEntries");
 
+  if (!list) return;
+
   const search = document.getElementById("search").value.toLowerCase();
   const filterCategory = document.getElementById("filterCategory").value;
 
   list.innerHTML = "";
 
-  let filtered = expenses.filter(exp => {
+  let filteredExpenses = expenses.filter(exp => {
     return (
       (filterCategory === "All" || exp.category === filterCategory) &&
       exp.desc.toLowerCase().includes(search)
@@ -54,14 +58,15 @@ function showExpenses() {
 
   let total = 0;
 
-  if (filtered.length === 0) {
+  if (filteredExpenses.length === 0) {
     list.innerHTML = `<li class="empty">No expenses found</li>`;
   }
 
-  filtered.forEach(exp => {
+  filteredExpenses.forEach(exp => {
     total += exp.amount;
 
     const li = document.createElement("li");
+
     li.innerHTML = `
       <div>
         <strong>${exp.desc}</strong><br>
@@ -72,11 +77,12 @@ function showExpenses() {
         <button onclick="deleteExpense(${exp.id})">✖</button>
       </div>
     `;
+
     list.appendChild(li);
   });
 
-  totalExpense.innerText = `₹${total}`;
-  totalEntries.innerText = filtered.length;
+  totalExpense.textContent = `₹${total}`;
+  totalEntries.textContent = filteredExpenses.length;
 
   updateChart();
 }
@@ -88,6 +94,11 @@ function deleteExpense(id) {
 }
 
 function updateChart() {
+  const canvas = document.getElementById("chart");
+  if (!canvas) return;
+
+  const ctx = canvas.getContext("2d");
+
   const categoryTotals = {
     Food: 0,
     Travel: 0,
@@ -98,12 +109,14 @@ function updateChart() {
   };
 
   expenses.forEach(exp => {
-    categoryTotals[exp.category] += exp.amount;
+    if (categoryTotals[exp.category] !== undefined) {
+      categoryTotals[exp.category] += exp.amount;
+    }
   });
 
-  const ctx = document.getElementById("chart").getContext("2d");
-
-  if (chart) chart.destroy();
+  if (chart) {
+    chart.destroy();
+  }
 
   chart = new Chart(ctx, {
     type: "doughnut",
@@ -122,13 +135,8 @@ function updateChart() {
       }]
     },
     options: {
-      plugins: {
-        legend: {
-          labels: {
-            color: document.body.classList.contains("light") ? "#000" : "#fff"
-          }
-        }
-      }
+      responsive: true,
+      maintainAspectRatio: false
     }
   });
 }
@@ -146,24 +154,30 @@ function exportCSV() {
   });
 
   const blob = new Blob([csv], { type: "text/csv" });
-  const a = document.createElement("a");
+  const link = document.createElement("a");
 
-  a.href = URL.createObjectURL(blob);
-  a.download = "expenses.csv";
-  a.click();
+  link.href = URL.createObjectURL(blob);
+  link.download = "expenses.csv";
+  link.click();
 }
 
-document.getElementById("themeToggle").addEventListener("click", () => {
-  document.body.classList.toggle("light");
-  localStorage.setItem(
-    "theme",
-    document.body.classList.contains("light") ? "light" : "dark"
-  );
+document.addEventListener("DOMContentLoaded", function () {
+  const themeToggle = document.getElementById("themeToggle");
+
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("light");
+
+      localStorage.setItem(
+        "theme",
+        document.body.classList.contains("light") ? "light" : "dark"
+      );
+    });
+  }
+
+  if (localStorage.getItem("theme") === "light") {
+    document.body.classList.add("light");
+  }
+
   showExpenses();
 });
-
-if (localStorage.getItem("theme") === "light") {
-  document.body.classList.add("light");
-}
-
-showExpenses();
