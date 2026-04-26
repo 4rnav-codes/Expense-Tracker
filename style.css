@@ -1,39 +1,153 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
 body {
-  font-family: Arial;
-  background: #222;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   color: white;
   display: flex;
   justify-content: center;
-}
-
-.container {
-  width: 350px;
   padding: 20px;
+  min-height: 100vh;
 }
 
-input, select, button {
+body.light {
+  background: #f4f4f4;
+  color: black;
+}
+
+.app {
   width: 100%;
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 8px;
+  max-width: 700px;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+}
+
+body.light .app {
+  background: white;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+header h1 {
+  font-size: 28px;
+}
+
+#themeToggle {
+  width: auto;
+  padding: 10px 14px;
+  border-radius: 50%;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.1);
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+}
+
+body.light .card {
+  background: #e9ecef;
+}
+
+.card p {
+  font-size: 24px;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.form-section,
+.filters {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+input,
+select,
+button {
+  padding: 12px;
   border: none;
+  border-radius: 10px;
+  outline: none;
 }
 
 button {
   background: #00c9a7;
   color: white;
+  font-weight: bold;
   cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+.export-btn {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+ul {
+  list-style: none;
+  margin-bottom: 25px;
 }
 
 li {
   display: flex;
   justify-content: space-between;
-  background: #333;
-  padding: 10px;
-  margin-top: 5px;
-  border-radius: 5px;
+  align-items: center;
+  background: rgba(255,255,255,0.08);
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 12px;
 }
 
-.top-bar {
-  text-align: right;
+body.light li {
+  background: #f1f1f1;
+}
+
+li button {
+  background: crimson;
+  padding: 6px 10px;
+  margin-left: 10px;
+}
+
+.empty {
+  justify-content: center;
+  color: gray;
+}
+
+canvas {
+  margin-top: 20px;
+  max-height: 350px;
+}
+
+@media (max-width: 600px) {
+  .summary {
+    grid-template-columns: 1fr;
+  }
+
+  header h1 {
+    font-size: 22px;
+  }
 }
