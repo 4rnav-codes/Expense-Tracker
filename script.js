@@ -85,6 +85,7 @@ function showExpenses() {
   totalEntries.textContent = filteredExpenses.length;
 
   updateChart();
+  updateBudget();
 }
 
 function deleteExpense(id) {
@@ -119,26 +120,33 @@ function updateChart() {
   }
 
   chart = new Chart(ctx, {
-    type: "doughnut",
-    data: {
-      labels: Object.keys(categoryTotals),
-      datasets: [{
-        data: Object.values(categoryTotals),
-        backgroundColor: [
-          "#00c9a7",
-          "#ff9671",
-          "#ffc75f",
-          "#845ec2",
-          "#0081cf",
-          "#f9f871"
-        ]
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false
+  type: "bar",
+  data: {
+    labels: Object.keys(categoryTotals),
+    datasets: [{
+  label: "Expenses (₹)",
+  data: Object.values(categoryTotals),
+  backgroundColor: [
+    "#00c9a7", // Food
+    "#ff9671", // Travel
+    "#ffc75f", // Shopping
+    "#845ec2", // Bills
+    "#0081cf", // Entertainment
+    "#f9f871"  // Other
+  ]
+}]
+  },
+  options: {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    title: {
+      display: true,
+      text: "Expense Distribution by Category"
     }
-  });
+  }
+}
+});
 }
 
 function exportCSV() {
@@ -161,6 +169,50 @@ function exportCSV() {
   link.click();
 }
 
+function saveBudget() {
+  const budget = parseFloat(document.getElementById("budgetInput").value);
+
+  if (isNaN(budget) || budget <= 0) {
+    alert("Enter a valid budget");
+    return;
+  }
+
+  localStorage.setItem("budget", budget);
+
+  updateBudget();
+}
+
+function updateBudget() {
+  const budget = parseFloat(localStorage.getItem("budget")) || 0;
+
+  const totalSpent = expenses.reduce(
+    (sum, exp) => sum + exp.amount,
+    0
+  );
+
+  const remaining = budget - totalSpent;
+
+  document.getElementById("budgetAmount").textContent = budget;
+  document.getElementById("remainingAmount").textContent = remaining;
+
+  const percentage =
+    budget > 0 ? (totalSpent / budget) * 100 : 0;
+
+    document.getElementById("budgetPercent").textContent =
+Math.round(percentage) + "% Used";
+
+  document.getElementById("budgetProgress").style.width =
+    Math.min(percentage, 100) + "%";
+
+  if (percentage > 80) {
+    document.getElementById("budgetProgress").style.background =
+      "#ff4d4d";
+  } else {
+    document.getElementById("budgetProgress").style.background =
+      "#00c9a7";
+  }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   const themeToggle = document.getElementById("themeToggle");
 
@@ -180,4 +232,5 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   showExpenses();
+  updateBudget();
 });
