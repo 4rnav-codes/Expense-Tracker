@@ -15,17 +15,45 @@
     </header>
 
     <div class="summary">
-      <div class="card">
-        <h3>Total Expenses</h3>
-        <p id="totalExpense">₹0</p>
-      </div>
-      <div class="card">
-        <h3>Total Entries</h3>
-        <p id="totalEntries">0</p>
-      </div>
+  <div class="card">
+    <h3>Total Expenses</h3>
+    <p id="totalExpense">₹0</p>
+  </div>
+  <div class="card">
+    <h3>Total Entries</h3>
+    <p id="totalEntries">0</p>
+  </div>
+</div>
+
+<!-- Budget Section -->
+<div class="budget-section">
+
+  <h3>💰 Monthly Budget Tracker</h3>
+
+  <input type="number" id="budgetInput" placeholder="Set Monthly Budget">
+  <button onclick="saveBudget()">Set Budget</button>
+
+  <div class="budget-info">
+    <div class="budget-card">
+      <h4>Budget</h4>
+      <p>₹<span id="budgetAmount">0</span></p>
     </div>
 
-    <div class="form-section">
+    <div class="budget-card">
+      <h4>Remaining</h4>
+      <p>₹<span id="remainingAmount">0</span></p>
+    </div>
+  </div>
+
+  <div class="progress-bar">
+    <div id="budgetProgress"></div>
+  </div>
+
+  <p id="budgetPercent">0% Used</p>
+
+</div>
+
+<div class="form-section">
       <input type="text" id="desc" placeholder="Description">
       <input type="number" id="amount" placeholder="Amount">
       <input type="date" id="date">
@@ -56,13 +84,15 @@
       </select>
     </div>
 
-    <button class="export-btn" onclick="exportCSV()">📁 Export CSV</button>
+   <button class="export-btn" onclick="exportCSV()">📁 Export CSV</button>
 
-    <ul id="list"></ul>
+<ul id="list"></ul>
 
-    <canvas id="chart"></canvas>
-  </div>
+<div class="chart-section">
+  <h3>Expense Analytics</h3>
+  <canvas id="chart"></canvas>
+</div>
 
-  <script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
